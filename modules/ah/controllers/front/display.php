@@ -1,5 +1,5 @@
 <?php
-class mymoduledisplayModuleFrontController extends ModuleFrontController
+class ahdisplayModuleFrontController extends ModuleFrontController
 {
   public function initContent()
   {

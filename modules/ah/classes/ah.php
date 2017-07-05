@@ -32,20 +32,20 @@ class Ah extends Module
         || !$this->registerHook('leftColumn')
         || !$this->registerHook('header')
         || !Configuration::updateValue('MYMODULE_NAME', 'my friend')
-        ) {
-            return false;
-        }
+    ) {
+        return false;
+    }
 
-        return true;
+    return true;
+}
+public function uninstall()
+{
+    if (!parent::uninstall()) {
+        return false;
     }
-    public function uninstall()
-    {
-        if (!parent::uninstall()) {
-            return false;
-        }
-        return true;
-    }
-    public function getContent()
+    return true;
+}
+public function getContent()
 {
     $output = null;
 
@@ -53,9 +53,9 @@ class Ah extends Module
     {
         $my_module_name = strval(Tools::getValue('MYMODULE_NAME'));
         if (!$my_module_name
-          || empty($my_module_name)
-          || !Validate::isGenericName($my_module_name))
-            $output .= $this->displayError($this->l('Invalid Configuration value'));
+        || empty($my_module_name)
+        || !Validate::isGenericName($my_module_name))
+        $output .= $this->displayError($this->l('Invalid Configuration value'));
         else
         {
             Configuration::updateValue('MYMODULE_NAME', $my_module_name);
@@ -64,7 +64,7 @@ class Ah extends Module
     }
     return $output.$this->displayForm();
 }
-    public function displayForm()
+public function displayForm()
 {
     // Get default language
     $default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
@@ -86,42 +86,62 @@ class Ah extends Module
         'submit' => array(
             'title' => $this->l('Save'),
             'class' => 'btn btn-default pull-right'
-        )
-    );
+            )
+        );
 
-    $helper = new HelperForm();
+        $helper = new HelperForm();
 
-    // Module, token and currentIndex
-    $helper->module = $this;
-    $helper->name_controller = $this->name;
-    $helper->token = Tools::getAdminTokenLite('AdminModules');
-    $helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name;
+        // Module, token and currentIndex
+        $helper->module = $this;
+        $helper->name_controller = $this->name;
+        $helper->token = Tools::getAdminTokenLite('AdminModules');
+        $helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name;
 
-    // Language
-    $helper->default_form_language = $default_lang;
-    $helper->allow_employee_form_lang = $default_lang;
+        // Language
+        $helper->default_form_language = $default_lang;
+        $helper->allow_employee_form_lang = $default_lang;
 
-    // Title and toolbar
-    $helper->title = $this->displayName;
-    $helper->show_toolbar = true;        // false -> remove toolbar
-    $helper->toolbar_scroll = true;      // yes - > Toolbar is always visible on the top of the screen.
-    $helper->submit_action = 'submit'.$this->name;
-    $helper->toolbar_btn = array(
-        'save' =>
-        array(
-            'desc' => $this->l('Save'),
-            'href' => AdminController::$currentIndex.'&configure='.$this->name.'&save'.$this->name.
-            '&token='.Tools::getAdminTokenLite('AdminModules'),
-        ),
-        'back' => array(
-            'href' => AdminController::$currentIndex.'&token='.Tools::getAdminTokenLite('AdminModules'),
-            'desc' => $this->l('Back to list')
-        )
-    );
+        // Title and toolbar
+        $helper->title = $this->displayName;
+        $helper->show_toolbar = true;        // false -> remove toolbar
+        $helper->toolbar_scroll = true;      // yes - > Toolbar is always visible on the top of the screen.
+        $helper->submit_action = 'submit'.$this->name;
+        $helper->toolbar_btn = array(
+            'save' =>
+            array(
+                'desc' => $this->l('Save'),
+                'href' => AdminController::$currentIndex.'&configure='.$this->name.'&save'.$this->name.
+                '&token='.Tools::getAdminTokenLite('AdminModules'),
+            ),
+            'back' => array(
+                'href' => AdminController::$currentIndex.'&token='.Tools::getAdminTokenLite('AdminModules'),
+                'desc' => $this->l('Back to list')
+                )
+            );
 
-    // Load current value
-    $helper->fields_value['MYMODULE_NAME'] = Configuration::get('MYMODULE_NAME');
+            // Load current value
+            $helper->fields_value['MYMODULE_NAME'] = Configuration::get('MYMODULE_NAME');
 
-    return $helper->generateForm($fields_form);
+            return $helper->generateForm($fields_form);
+        }
+public function hookDisplayLeftColumn($params)
+{
+  $this->context->smarty->assign(
+      array(
+          'my_module_name' => Configuration::get('MYMODULE_NAME'),
+          'my_module_link' => $this->context->link->getModuleLink('mymodule', 'display')
+      )
+  );
+  return $this->display(_PS_MODULE_DIR_.$this->name, 'ah.tpl');
 }
+
+public function hookDisplayRightColumn($params)
+{
+  return $this->hookDisplayLeftColumn($params);
 }
+
+public function hookDisplayHeader()
+{
+  $this->context->controller->addCSS($this->_path.'css/ah.css', 'all');
+}
+    }

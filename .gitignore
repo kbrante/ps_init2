@@ -3,6 +3,7 @@
 !/modules
 /modules/*
 !/modules/ah
+!/modules/count_product
 !/config
 /config/*
 !/config/defines.inc.php

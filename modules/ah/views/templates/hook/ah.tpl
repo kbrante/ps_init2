@@ -11,6 +11,9 @@
     </p>
     <ul>
       <li><a href="{$my_module_link}"  title="{l s='Click this link' mod='ah'}">{l s='Click me!' mod='ah'}</a></li>
+      <li> Il y a {$my_stock} produits en stock.</li>
+      <li> le dernier produit : </li>
+      <li> {$last_product}</li>
     </ul>
   </div>
 </div>

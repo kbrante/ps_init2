@@ -124,24 +124,28 @@ public function displayForm()
 
             return $helper->generateForm($fields_form);
         }
-public function hookDisplayLeftColumn($params)
-{
-  $this->context->smarty->assign(
-      array(
-          'ah' => Configuration::get('MYMODULE_NAME'),
-          'my_module_link' => $this->context->link->getModuleLink('ah', 'display')
-      )
-  );
-  return $this->display(_PS_MODULE_DIR_.$this->name, 'ah.tpl');
-}
+        public function hookDisplayLeftColumn($params)
+        {
+            $productObj = new Product();
+            $products = $productObj->getProducts(Context::getContext()->language->id, 0, 0, 'id_product', 'DESC', false, true);
+            $this->context->smarty->assign(
+                array(
+                    'ah' => Configuration::get('MYMODULE_NAME'),
+                    'my_module_link' => $this->context->link->getModuleLink('ah', 'display'),
+                    'my_stock' => count($products),
+                    'last_product' => $products[0][name]
+                    )
+                );
+                return $this->display(_PS_MODULE_DIR_.$this->name, 'ah.tpl');
+            }
 
-public function hookDisplayRightColumn($params)
-{
-  return $this->hookDisplayLeftColumn($params);
-}
+            public function hookDisplayRightColumn($params)
+            {
+                return $this->hookDisplayLeftColumn($params);
+            }
 
-public function hookDisplayHeader()
-{
-  $this->context->controller->addCSS($this->_path.'css/ah.css', 'all');
-}
-    }
+            public function hookDisplayHeader()
+            {
+                $this->context->controller->addCSS($this->_path.'css/ah.css', 'all');
+            }
+        }
